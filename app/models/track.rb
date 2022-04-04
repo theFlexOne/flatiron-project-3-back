@@ -1,4 +1,7 @@
+require_relative "../helpers/controller_helpers.rb"
+
 class Track < ActiveRecord::Base
+  include ControllerHelpers
   has_many :playlist_tracks
   has_many :playlists, through: :playlist_tracks
   belongs_to :album
@@ -9,11 +12,9 @@ class Track < ActiveRecord::Base
   end
 
   def duration
-    minutes = (self.duration_s / 60).to_s
-    seconds = (self.duration_s % 60).to_s
-    if seconds.length === 1
-      seconds = "0" + seconds
+    if self.duration_s.nil?
+      return
     end
-    "#{minutes}:#{seconds}"
+    formattedDuration = seconds_to_time_display(self.duration_s)
   end
 end

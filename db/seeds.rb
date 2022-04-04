@@ -2,26 +2,53 @@ require_relative "../config/environment.rb"
 
 puts "Seeding..."
 
-album_ids = YAML.parse_file("spotify_ids.yaml").to_ruby
+# Import hard-coded Spotify artist id's
+artist_spotify_ids = YAML.parse_file("spotify_ids.yaml").map(&:transform)
 
-album_ids.each do |id|
-  album = RSpotify::Album.find(id)
+artist_spotify_ids.map do |id|
+  s_artist = RSpotify::Artist.find(id)
+  s_albums = s_artist.albums
 
-  # grabbing the spotify ids
-  track_ids = album.tracks.map(&:id)
-  artist_id = album.artists.first.id
+  # Create artist
+  artist = Artist.find_or_create_by(spotify_id: s_artist.id)
+  artist_attributes = {
+    name: s_artist.name,
+    popularity: s_artist.popularity,
+    img_url: s_artist.images.last["url"],
+  }
+  artist.attributes = artist.attributes.merge artist_attributes
+  artist.save
 
-  # creating artist
-  Artist.find_or_create_by(spotify_id: artist_id)
+  # Create all albums for artist
+  s_albums.each do |s_album|
+    album = Album.find_or_create_by(spotify_id: s_album.id)
+    album_attributes = {
+      artist_id: artist.id,
+      name: s_album.name,
+      img_url: s_album.images.last["url"],
+      release_date: s_album.release_date,
+    }
+    album.attributes = album.attributes.merge album_attributes
+    album.save
 
-  # creating tracks
-  track_ids.each do |id|
-    Track.find_or_create_by(spotify_id: id)
+    # Create all tracks for each album by the artist
+    tracks = s_album.tracks
+    tracks.each do |s_track|
+      track = Track.find_or_create_by(spotify_id: s_track.id)
+      track_attributes = {
+        album_id: album.id,
+        name: s_track.name,
+        duration_s: (s_track.duration_ms / 1000),
+      }
+      track.attributes = track.attributes.merge track_attributes
+      track.save
+    end
   end
 
-  binding.pry
-end
+  total_albums = artist.albums.size
+  total_tracks = artist.albums.map { |a| a.tracks.size }.flatten.sum
 
-# binding.pry
+  puts "Created artist '#{artist.name}' with #{total_albums} albums & #{total_tracks} total tracks"
+end
 
 puts "Seeding done!"

@@ -1,6 +1,8 @@
-include "./application_controller.rb"
+require_relative "../helpers/controller_helpers.rb"
 
 class ArtistsController < ApplicationController
+  include ControllerHelpers
+
   get "/artists" do
     artists = Artist.all
     artists.to_json(:include => { :albums => { :include => :tracks } })
@@ -8,6 +10,17 @@ class ArtistsController < ApplicationController
 
   get "/artists/:id" do |id|
     artist = Artist.find_by(id: id) || {}
-    artist.to_json
+
+    tracks = build_tracks(artist.tracks)
+    albums = build_albums(artist.albums)
+
+    data = {
+      id: artist.id,
+      name: artist.name,
+      albums: albums,
+      tracks: tracks,
+    }
+
+    data.to_json
   end
 end

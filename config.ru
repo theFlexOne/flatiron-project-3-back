@@ -11,7 +11,9 @@ end
 # Parse JSON from the request body into the params hash
 use Rack::JSONBodyParser
 
+# use Rack::Session::Cookie
+
 use PlaylistsController
 use ArtistsController
-use AlbumsController
+# use AlbumsController
 run ApplicationController

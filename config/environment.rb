@@ -8,6 +8,4 @@ Bundler.require(:default, ENV["RACK_ENV"])
 # Require in all files in 'app' directory
 require_all "app"
 
-client_id = ENV["SPOTIFY_CLIENT_ID"]
-client_secret = ENV["SPOTIFY_CLIENT_SECRET"]
-# RSpotify.authenticate(client_id, client_secret)
+RSpotify.authenticate(ENV["SPOTIFY_CLIENT_ID"], ENV["SPOTIFY_CLIENT_SECRET"])

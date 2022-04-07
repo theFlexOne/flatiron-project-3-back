@@ -11,10 +11,12 @@ class Track < ActiveRecord::Base
     self.artist.genres
   end
 
+  def album_img_url
+    return self.album&.img_url || ""
+  end
+
   def duration
-    if self.duration_s.nil?
-      return
-    end
+    return nil if self.duration_s.nil?
     formattedDuration = seconds_to_time_display(self.duration_s)
   end
 end

@@ -1,21 +1,25 @@
 module ControllerHelpers
+  def build_track(track)
+    {
+      id: track.id,
+      name: track.name,
+      artist: {
+        id: track.artist&.id || nil,
+        name: track.artist&.name || "",
+        img_url: track.artist&.img_url || "",
+      },
+      album: {
+        id: track.album&.id || nil,
+        name: track.album&.name || "",
+        img_url: track.album&.img_url || "",
+      },
+      duration: track.duration || nil,
+    }
+  end
+
   def build_tracks(tracks)
     tracks.map do |track|
-      {
-        id: track.id,
-        name: track.name,
-        artist: {
-          id: track.artist&.id || nil,
-          name: track.artist&.name || "",
-          img_url: track.artist&.img_url || "",
-        },
-        album: {
-          id: track.album&.id || nil,
-          name: track.album&.name || "",
-          img_url: track.album&.img_url || "",
-        },
-        duration: track.duration || nil,
-      }
+      build_track(track)
     end
   end
 

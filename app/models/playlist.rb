@@ -12,16 +12,19 @@ class Playlist < ActiveRecord::Base
   end
 
   def self.remove_track(playlist, track)
+    # TODO do PlaylistTrack thing
     playlist = (playlist.class == Integer) ? Playlist.find(playlist) : playlist
     playlist.tracks.delete(track)
   end
 
   def self.add_track_id(playlist, track_id)
+    # TODO do PlaylistTrack thing
     playlist.track_ids = [*playlist.track_ids, track_id]
   end
 
   def add_track_id(track_id)
-    Playlist.add_track_id(self, track_id)
+    # Playlist.add_track_id(self, track_id)
+    PlaylistTrack.create(playlist_id: self.id, track_id: track_id)
   end
 
   def add_track_by(attr)

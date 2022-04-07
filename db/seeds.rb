@@ -3,9 +3,13 @@ require_relative "../config/environment.rb"
 puts "Seeding..."
 
 # Import hard-coded Spotify artist id's
-artist_spotify_ids = YAML.parse_file("spotify_ids.yaml").map(&:transform)
+spotify_ids = YAML.load_file("spotify_ids.yaml")
 
-artist_spotify_ids.map do |id|
+artist_spotify_ids = spotify_ids[:artists]
+playlist_spotify_ids = spotify_ids[:playlists]
+
+# Seeding music from Spotify with a list of Spotify artist ids
+artist_spotify_ids.each do |id|
   s_artist = RSpotify::Artist.find(id)
   s_albums = s_artist.albums
 
@@ -49,6 +53,48 @@ artist_spotify_ids.map do |id|
   total_tracks = artist.albums.map { |a| a.tracks.size }.flatten.sum
 
   puts "Created artist '#{artist.name}' with #{total_albums} albums & #{total_tracks} total tracks"
+end
+
+# Seeding my playlists from Spotify with a list of my Spotify playlist ids
+playlist_spotify_ids.each do |id|
+
+  # find playlist in spotify
+  s_playlist = RSpotify::Playlist.find(ENV["MY_SPOTIFY_USER_ID"], id)
+
+  # find or create playlist in db
+  playlist = Playlist.find_or_create_by(spotify_id: s_playlist.id)
+
+  # fill in playlist attributes with spotify data
+  img_url = s_playlist.images.first["url"] unless s_playlist.images.empty?
+  playlist_attributes = {
+    name: s_playlist.name,
+    img_url: img_url,
+  }
+  playlist.attributes = playlist.attributes.merge playlist_attributes
+
+  # get all tracks for playlist from spotify
+  s_playlist.tracks.each do |s_track|
+
+    # find or create track in db
+    track = Track.find_or_create_by(spotify_id: s_track.id)
+
+    # fill in track attributes with spotify data
+    track_attributes = {
+      name: s_track.name,
+      duration_s: (s_track.duration_ms / 1000),
+    }
+    track.attributes = track.attributes.merge track_attributes
+
+    # save changes to track
+    track.save
+
+    # save track to playlist
+    PlaylistTrack.find_or_create_by(track_id: track.id, playlist_id: s_playlist.id)
+  end
+
+  # save changes to playlist
+  playlist.save
+  puts "Created playlist #{playlist.name} with #{playlist.tracks.size} tracks"
 end
 
 puts "Seeding done!"

@@ -5,20 +5,6 @@ class ApplicationController < Sinatra::Base
     redirect "/models"
   end
 
-  get "/models" do
-    [
-      { endpoint: "/playlists", label: "Playlists" },
-      { endpoint: "/artists", label: "Artists" },
-      { endpoint: "/albums", label: "Albums" },
-      { endpoint: "/tracks", label: "Tracks" },
-    ].to_json
-  end
-
-  post "/test" do |req|
-    puts req
-    "TEST POST RECIEVED!!!"
-  end
-
   get "/albums" do
     albums = Album.all
     # data = albums.map do |album|

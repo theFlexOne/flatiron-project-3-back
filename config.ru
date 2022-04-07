@@ -8,10 +8,11 @@ use Rack::Cors do
   end
 end
 
+user = RSpotify::User.find ENV["MY_SPOTIFY_USER_ID"]
+playlists = user.playlists
+
 # Parse JSON from the request body into the params hash
 use Rack::JSONBodyParser
-
-# use Rack::Session::Cookie
 
 use PlaylistsController
 use ArtistsController

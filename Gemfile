@@ -13,6 +13,7 @@ gem "require_all", "~> 3.0"
 # MINE
 gem 'rspotify', '~> 2.11', '>= 2.11.1'
 gem 'dotenv', '~> 2.7', '>= 2.7.6'
+gem 'active_model_serializers'
 
 group :development do
   gem "pry", "~> 0.14.1"

@@ -8,17 +8,11 @@ Simply clone this repo.
 
 ## Usage
 
-In the terminal, from this project's root directory, run:
-
-```bash
-rake server
-```
-
-This will setup the server to start listening to requests from the corresponding frontend application.
+To use this backend server as intended, simply run `rake server` in the terminal, from the root directory you cloned the repo into. This will startup a server to listen for requests on `localhost:9292`. The database is already seeded with data from the spotify API, using my personal account. Trying to reset or reseed the database will fail without spotify credentials. 
 
 ### Routes
 
-These are the active routes the server will listen for:
+These are the relative active routes the server will listen for:
 
 ---
 

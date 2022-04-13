@@ -14,7 +14,9 @@ playlists = user.playlists
 # Parse JSON from the request body into the params hash
 use Rack::JSONBodyParser
 
+use TracksController
 use PlaylistsController
 use ArtistsController
 # use AlbumsController
+use PlaylistTracksController
 run ApplicationController

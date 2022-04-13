@@ -3,7 +3,7 @@ class Album < ActiveRecord::Base
   has_many :tracks
   has_many :playlists, through: :tracks
 
-  def genres
-    self.artist.genres
+  def album_release_date
+    self.release_date&.to_date.to_s || ""
   end
 end

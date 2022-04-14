@@ -8,8 +8,7 @@ use Rack::Cors do
   end
 end
 
-user = RSpotify::User.find ENV["MY_SPOTIFY_USER_ID"]
-playlists = user.playlists
+RSpotify.authenticate(ENV["SPOTIFY_CLIENT_ID"], ENV["SPOTIFY_CLIENT_SECRET"])
 
 # Parse JSON from the request body into the params hash
 use Rack::JSONBodyParser

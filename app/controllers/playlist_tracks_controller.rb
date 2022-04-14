@@ -1,14 +1,14 @@
 class PlaylistTracksController < ApplicationController
   post "/playlist_tracks" do
-    playlist_id = Playlist.find(params[:playlist_id]).id
-    track_id = Track.find(params[:track_id]).id
+    # binding.pry
+    playlist = Playlist.find(params[:playlist_id])
+    track = Track.find(params[:track_id])
     duplicate = params[:duplicate] == "true"
-    playlist_track = PlaylistTrack.find_by(playlist_id: playlist_id, track_id: track_id)
+    playlist_track = PlaylistTrack.find_by(playlist_id: playlist.id, track_id: track.id)
     if (!playlist_track.nil? && duplicate) || playlist_track.nil?
-      playlist_track = PlaylistTrack.create(playlist_id: playlist_id, track_id: track_id)
+      playlist_track = PlaylistTrack.create(playlist_id: playlist.id, track_id: track.id)
     end
-
-    return playlist_track.to_json
+    return playlist_track.track.to_json TRACK_SERIALIZER
   rescue ActiveRecord::RecordNotFound => err
     body << err.message
     not_found(body)
